@@ -1,5 +1,5 @@
 ﻿
-namespace TestBD_1C_2
+namespace TestBD_1C
 {
     partial class Form1
     {

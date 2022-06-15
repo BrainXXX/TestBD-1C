@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B7853A36-D1E7-4230-BCD6-7F6245AC1A6F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>TestBD_1C_2</RootNamespace>
-    <AssemblyName>TestBD-1C-2</AssemblyName>
+    <RootNamespace>TestBD_1C</RootNamespace>
+    <AssemblyName>TestBD-1C</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

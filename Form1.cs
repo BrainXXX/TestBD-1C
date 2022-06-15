@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
-namespace TestBD_1C_2
+namespace TestBD_1C
 {
     public partial class Form1 : Form
     {
@@ -35,7 +35,7 @@ namespace TestBD_1C_2
                     {
                         await _connection.OpenAsync();
 
-                        _query = new SqlCommand(@"SELECT [Номер], Фирма.Наименование AS Фирма,
+                        _query = new SqlCommand(@"SELECT Номер, Фирма.Наименование AS Фирма,
 	                                                    CONCAT('ЗаказТовара ', Номер, ' от ', CONCAT(CONVERT(VARCHAR, Дата, 104), ' ', CONVERT(VARCHAR, Дата, 108))) AS ЗаказТовара
 	                                                    FROM [dns_m].[dwh].[Документ.ЗаказТовара]
 	                                                    INNER JOIN dns_m.dwh.[Справочник.Фирмы] AS Фирма ON Фирма.Ссылка = [dns_m].[dwh].[Документ.ЗаказТовара].Фирма
@@ -47,7 +47,7 @@ namespace TestBD_1C_2
 
                             while (await _reader.ReadAsync())
                             {
-                                label1.Text += $"{_reader["Фирма"]} - {_reader["ЗаказТовара"]}\n";
+                                label1.Text += $"[{_reader["Номер"]}] {_reader["Фирма"]} - {_reader["ЗаказТовара"]}\n";
                             }
                         }
 
@@ -62,16 +62,10 @@ namespace TestBD_1C_2
             catch (NullReferenceException ex)
             {
                 label1.Text += ex.Message;
-                _connection.Dispose();
-                _reader.Dispose();
-                _query.Dispose();
             }
             catch (Exception ex)
             {
                 label1.Text += ex.Message;
-                _connection.Dispose();
-                _reader.Dispose();
-                _query.Dispose();
             }
         }
 

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TestBD_1C_2.Properties {
+namespace TestBD_1C.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
