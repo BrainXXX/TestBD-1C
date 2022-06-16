@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -20,7 +21,9 @@ namespace TestBD_1C_2
         {
             this.Text = "Test BD 1C";
             label1.Text = "";
-            button1.Text = "Start query";
+            button1.Text = "Start query 1";
+            button2.Text = "Start query 2";
+            textBox1.Text = @"select * from Products where UnitPrice > 100";
         }
 
         private async void Button1_Click(object sender, EventArgs e)
@@ -29,25 +32,21 @@ namespace TestBD_1C_2
             {
                 label1.Text = "LOADING ...";
 
-                if (GetConnectionString("dns_m") != null)
+                if (GetConnectionString("NortwindDB") != null)
                 {
-                    using (_connection = new SqlConnection(GetConnectionString("dns_m")))
+                    using (_connection = new SqlConnection(GetConnectionString("NortwindDB")))
                     {
                         await _connection.OpenAsync();
 
-                        _query = new SqlCommand(@"SELECT [Номер], Фирма.Наименование AS Фирма,
-	                                                    CONCAT('ЗаказТовара ', Номер, ' от ', CONCAT(CONVERT(VARCHAR, Дата, 104), ' ', CONVERT(VARCHAR, Дата, 108))) AS ЗаказТовара
-	                                                    FROM [dns_m].[dwh].[Документ.ЗаказТовара]
-	                                                    INNER JOIN dns_m.dwh.[Справочник.Фирмы] AS Фирма ON Фирма.Ссылка = [dns_m].[dwh].[Документ.ЗаказТовара].Фирма
-	                                                    WHERE Номер = 'ПзС-000100'", _connection);
+                        _query = new SqlCommand(@"select top 10 ProductID, ProductName, QuantityPerUnit from Products", _connection);
 
                         using (_reader = await _query.ExecuteReaderAsync())
                         {
-                            label1.Text = "";
+                            label1.Text = $"{_reader.GetName(0)} {_reader.GetName(1)} {_reader.GetName(2)}\n";
 
                             while (await _reader.ReadAsync())
                             {
-                                label1.Text += $"{_reader["Фирма"]} - {_reader["ЗаказТовара"]}\n";
+                                label1.Text += $"[{_reader.GetValue(0)}] {_reader["ProductName"]} - {_reader["QuantityPerUnit"]}\n";
                             }
                         }
 
@@ -59,19 +58,39 @@ namespace TestBD_1C_2
                     label1.Text = "Не найдена строка подключения!";
                 }
             }
-            catch (NullReferenceException ex)
+            catch (Exception ex)
             {
-                label1.Text += ex.Message;
-                _connection.Dispose();
-                _reader.Dispose();
-                _query.Dispose();
+                label1.Text = ex.Message;
+            }
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (GetConnectionString("NortwindDB") != null)
+                {
+                    using (_connection = new SqlConnection(GetConnectionString("NortwindDB")))
+                    {
+                        await _connection.OpenAsync();
+
+                        SqlDataAdapter dataAdapter = new SqlDataAdapter(textBox1.Text, _connection);
+
+                        DataSet dataSet = new DataSet();
+
+                        dataAdapter.Fill(dataSet);
+
+                        dataGridView1.DataSource = dataSet.Tables[0];
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Не найдена строка подключения!");
+                }
             }
             catch (Exception ex)
             {
-                label1.Text += ex.Message;
-                _connection.Dispose();
-                _reader.Dispose();
-                _query.Dispose();
+                MessageBox.Show(ex.Message);
             }
         }
 
